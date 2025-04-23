@@ -77,46 +77,104 @@
 # print("\n Información de la moto:")
 # moto1.mostrar_info()
 
-#3 ejercicio
+#3 ejercicio guardar archivo peroe ste archivo se repite 
+#el siguiente ejercicio lo hare con que tenga validaciones para que no se repita
 
-class Mascota:
-    def __init__(self,nombre, edad,raza):
+# class Mascota:
+#     def __init__(self,nombre, edad,raza):
+#         self.nombre = nombre
+#         self.edad = edad
+#         self.raza = raza
+    
+#     def mostrar_info(self):
+#         print(f"Nombre: {self.nombre}")
+#         print(f"Edad: {self.edad}")
+#         print(f"Raza: {self.raza}")
+    
+# class Perro(Mascota):
+#     def __init__(self,Nivel_entrenamiento,nombre,edad,raza):
+#         super().__init__(nombre,edad,raza)
+#         self.Nivel_entrenamiento = Nivel_entrenamiento
+#     def mostrar_info(self):
+#         super().mostrar_info()
+#         print(f"Entrenamiento {self.Nivel_entrenamiento}")
+#     def ladrar(self):
+#         print("guau guau perra!")
+
+# class Gato(Mascota):
+#     def __init__(self,tipo_pelaje,nombre,edad,raza):
+#         super().__init__(nombre,edad,raza)
+#         self.tipo_pelaje = tipo_pelaje
+#     def mostrar_info(self):
+#             super().mostrar_info()
+#             print(f"Tipo de pelaje: {self.tipo_pelaje}")
+#     def maullar(self):
+#         print("Mauuuuuuuuu!")
+
+# perro1 = Perro("duro","medardo",50,"Pastor aleman")
+# print ("Informacion del perro: ")
+# perro1.mostrar_info()
+# perro1.ladrar()
+
+# gato1 = Gato("medio", "medarda",3,"Egipcio")
+# print("\nInformacion del gato: ")
+# gato1.mostrar_info()
+# gato1.maullar()
+
+# def guardar_mascota(mascota):
+#     with open("mascotas.txt", "w") as archivo:
+#         archivo.write(f"Guardando nueva mascota...\n")
+#         archivo.write(f"nombre: {mascota.nombre}| Edad: {mascota.edad}| Raza: {mascota.raza}\n")
+
+# guardar_mascota(perro1)
+# guardar_mascota(gato1)
+
+#ejercicio 4 ejercicio guardado sin dubplicados y en .json
+import json
+import os
+class Producto():
+    def __init__(self,nombre, codigo_barras,precio):
         self.nombre = nombre
-        self.edad = edad
-        self.raza = raza
+        self.codigo_barras = codigo_barras
+        self.precio = precio
     
     def mostrar_info(self):
         print(f"Nombre: {self.nombre}")
-        print(f"Edad: {self.edad}")
-        print(f"Raza: {self.raza}")
+        print(f"Codigo de barra: {self.codigo_barras}")
+        print(f"Precio: {self.precio}")
     
-class Perro(Mascota):
-    def __init__(self,Nivel_entrenamiento,nombre,edad,raza):
-        super().__init__(nombre,edad,raza)
-        self.Nivel_entrenamiento = Nivel_entrenamiento
-    def mostrar_info(self):
-        super().mostrar_info()
-        print(f"Entrenamiento {self.Nivel_entrenamiento}")
-    def ladrar(self):
-        print("guau guau perra!")
+    def a_dict(self):
+        return {
+            "id": self.codigo_barras,
+            "nombre": self.nombre,
+            "precio": self.precio
+        }
+    
+def guardar_producto_json (producto,archivo ="productos.json"):
+    #convertimos el producto a diccionario
+    producto_dict = producto.a_dict()
 
-class Gato(Mascota):
-    def __init__(self,tipo_pelaje,nombre,edad,raza):
-        super().__init__(nombre,edad,raza)
-        self.tipo_pelaje = tipo_pelaje
-    def mostrar_info(self):
-            super().mostrar_info()
-            print(f"Tipo de pelaje: {self.tipo_pelaje}")
-    def maullar(self):
-        print("Mauuuuuuuuu!")
+    if not os.path.exists(archivo):
+        productos = []
+    else:
+        with open(archivo, "r") as f:
+            try:
+                productos = json.load(f)
+            except json.JSONDecodeError:
+                productos = []
+    ids_existentes = [p["id"] for p in productos]
+    if producto_dict["id"] not in ids_existentes:
+        productos.append(producto_dict)
+        with open(archivo, "w") as f:
+            json.dump (productos, f, indent=4)
+        print("Producto guardado.")
+    else:
+        print("Este producto ya existe o no se guardo.")
 
-perro1 = Perro("duro","medardo",50,"Pastor aleman")
-print ("Informacion del perro: ")
-perro1.mostrar_info()
-perro1.ladrar()
+producto1 = Producto("Coca-cola","159753", 8.5)
+producto2 = Producto("Pepsi","147852", 7.8)
+producto3 = Producto("Coca-cola","159753", 8.5)
 
-gato1 = Gato("medio", "medarda",3,"Egipcio")
-print("\nInformacion del gato: ")
-gato1.mostrar_info()
-gato1.maullar()
-
+guardar_producto_json(producto1)
+guardar_producto_json(producto2)
+guardar_producto_json(producto3)
