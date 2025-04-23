@@ -132,6 +132,7 @@
 #ejercicio 4 ejercicio guardado sin dubplicados y en .json
 import json
 import os
+from abc import ABC, abstractmethod
 class Producto():
     def __init__(self,nombre, codigo_barras,precio):
         self.nombre = nombre
@@ -178,3 +179,117 @@ producto3 = Producto("Coca-cola","159753", 8.5)
 guardar_producto_json(producto1)
 guardar_producto_json(producto2)
 guardar_producto_json(producto3)
+
+#ejercicio 5 es lo mismo que el anterior pero para reforzar 
+
+class Libro():
+    def __init__(self,titulo,autor,isbn):
+        self.titulo = titulo
+        self.autor = autor
+        self.isbn = isbn
+    def mostrar_info(self):
+        print(f"Titulo: {self.titulo}") 
+        print(f"Autor:{self.autor}")
+        print(f"Isbn: {self.isbn}")
+    def a_dict(self):
+        return{
+            "titulo": self.titulo,
+            "autor": self.autor,
+            "isbn": self.isbn
+        }
+
+def guardar_libro_json(libro, archivo = "libro.json"):
+    libro_dict = libro.a_dict()
+
+    if not os.path.exists(archivo):
+        libros = []
+    else:
+        with open (archivo, "r") as archive:
+            try:
+                libros = json.load(archive)
+            except json.JSONDecodeError:
+                libros = []
+    isbn_existentes = [p["isbn"] for p in libros]
+    if libro_dict["isbn"] not in isbn_existentes:
+        libros.append(libro_dict)
+        with open(archivo, "w") as archive:
+            json.dump(libros, archive, indent=4)
+            print("Libro guardado correctamente.")
+    else:
+        print("Este libro ya existe o no se guardo")
+
+libro1 = Libro("1984", "George orwell", "159753")
+libro2 = Libro("Cien años de soledad", "Gabriel Garcia", "147852")
+libro3 = Libro("1984", "George orwell", "159753")
+
+guardar_libro_json(libro1)
+guardar_libro_json(libro2)
+guardar_libro_json(libro3)
+
+############
+#ejercicio 6 polimorfismo añadido y clase abstracta
+############
+class Publicacion(ABC):
+    def __init__(self,titulo,autor):
+        self.titulo = titulo
+        self.autor = autor
+    
+    @abstractmethod
+
+    def mostrar_info(self):
+        pass
+
+    @abstractmethod
+
+    def a_dict (self):
+        pass
+
+class Libro(Publicacion):
+    def __init__(self, titulo, autor,isbn):
+        super().__init__(titulo,autor)    
+        self.isbn = isbn
+    def mostrar_info(self):
+        print(f"titulo: {self.titulo}")
+        print(f"autor: {self.autor}")
+        print(f"isbn: {self.isbn}")
+    def a_dict(self):
+        return{
+            "tipo": "libro",
+            "titulo": self.titulo,
+            "autor": self.autor,
+            "isbn": self.isbn
+        }
+class Revista(Publicacion):
+    def __init__(self, titulo, autor,edicion):
+        super().__init__(titulo, autor)
+        self.edicion = edicion
+    def mostrar_info(self):
+        print(f"titulo: {self.titulo}")
+        print(f"autor: {self.autor}")
+        print(f"edicion: {self.edicion}")
+    def a_dict(self):
+        return{
+            "tipo": "revista",
+            "titulo": self.titulo,
+            "autor": self.autor,
+            "edicion": self.edicion
+        }
+libro1 = Libro("Python para todos","Gary Gallardo", "159753")
+revista1 = Revista("Revista de Tecnologia","Ana lopez", "Edicion 101")
+
+publicaciones = [libro1, revista1]
+
+for p in publicaciones:
+    p.mostrar_info()
+
+class guardar_publicacion_json(publicaciones, archivo = "publicaciones.json"):
+    publicaciones_dict = publicaciones.a_dict()
+    if not os.path.exists(archivo):
+        publicacioness = []
+    else:
+        with open(archivo, "r") as archive:
+            try: 
+                publicacioness = json.load(archive)
+            except json.JSONDecodeError:
+                publicacioness = []
+    
